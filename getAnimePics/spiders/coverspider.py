@@ -9,17 +9,19 @@ class CoverSpider(scrapy.Spider):
 
     def parse(self, response):
         #For every thumbnail, extract the image link from under the span a attribute
-        url = response.css("span a::attr(href)").extract()
+        for url in response.xpath(""):
+            yield scrapy.Request(url.css("span a::attr(href)").extract_first(), self.parse_images)
+        #url = response.css("span a::attr(href)").extract()
+    
+    def parse_images(self, response):
+        url = response.css("img::atr(src)").extract()
         for item in zip(url):
             scraped_info = {
                 'image_urls' : [item[0]]
             }
+        
+        yield scraped_info
 
-            yield scraped_info
-        #for url in response.css("span a::attr(href)").extract():
-            #Extract the image url from every url
-         #   image_url = url.css("img::attr(src)").extract()
-         #   yield GetanimepicsItem(file_urls(image_url))
             
 
 
