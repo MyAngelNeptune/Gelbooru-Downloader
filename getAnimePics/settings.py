@@ -88,4 +88,4 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-IMAGES_STORE = 'D:/Cute anime girls/Tomoe'
+IMAGES_STORE = '\Users\KelvinK\Pictures\Tomoe'
