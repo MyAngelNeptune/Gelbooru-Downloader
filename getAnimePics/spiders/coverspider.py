@@ -25,9 +25,9 @@ class CoverSpider(scrapy.Spider):
 
     def parse_images(self, response):
         imageUrl = response.css("img::attr(src)").extract()
-        print(imageUrl)
-        print(imageUrl)
-        yield GetanimepicsItem(image_urls=[imageUrl])
+        realUrl = ''.join(imageUrl)
+        print(realUrl)
+        yield GetanimepicsItem(image_urls=[realUrl])
 
 
             
