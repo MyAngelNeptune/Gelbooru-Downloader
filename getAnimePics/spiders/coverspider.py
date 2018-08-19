@@ -9,9 +9,12 @@ class CoverSpider(scrapy.Spider):
     start_urls = ["https://gelbooru.com/index.php?page=post&s=list&tags=solo+tomoe_gozen_%28fate%2Fgrand_order%29+rating%3Asafe&pid=0"]
     custom_settings = {
         "ITEM_PIPELINES": {'scrapy.pipelines.images.ImagesPipeline': 1},
-        "IMAGES_STORE": '\Users\KelvinK\Pictures\Tomoe'
+        "IMAGES_STORE": 'D:\Cute anime girls\Tomoe'
     }
+
     def parse(self, response):
+        #Starts on first page and increases the page number once every image is downloaded
+        pageNumber = 1
         #For every thumbnail, extract the image link from under the span a attribute
         url = response.css("span a::attr(href)").extract()
         urlList = zip(url)
