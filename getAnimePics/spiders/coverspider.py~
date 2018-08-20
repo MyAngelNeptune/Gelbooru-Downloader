@@ -8,42 +8,40 @@ pageNumber = 0
 class CoverSpider(scrapy.Spider):
     name = "gelbooruSearch"
     allowed_domains = ['gelbooru.com']
-    start_urls = ["https://gelbooru.com/index.php?page=post&s=list&tags=solo+tomoe_gozen_%28fate%2Fgrand_order%29+rating%3Asafe&pid=0"]
+    start_urls = ["https://gelbooru.com/index.php?page=post&s=list&tags=dengeki&pid=0"]
     custom_settings = {
         "ITEM_PIPELINES": {'scrapy.pipelines.images.ImagesPipeline': 1},
-        "IMAGES_STORE": 'D:\Cute anime girls\Tomoe'
+        "IMAGES_STORE": 'D:\Cute anime girls\Test'
     }
 
 
     def parse(self, response):
+        parsing = false
         #Starts on first page and increases the page number once every image is downloaded
         imagesPerPage = 42
         #For every thumbnail, extract the image link from under the span a attribute
         url = response.css("span a::attr(href)").extract()
         urlList = zip(url)
-        theFile = open('debug.txt', 'w')
         #Gets every url in the list and then makes them into a string 
         for item in urlList:
+            parsing = true
             imageLink = ''.join(item)
             imageLink = "https:" + imageLink
-            theFile.write("%s\n" % item)
             #Once the link is converted into a string, it uses it as the URL and calls parse_images
             yield scrapy.Request(imageLink, callback=self.parse_images)
      
-        theFile.close()
         nextUrl = response.url.split("&pid=")
         global pageNumber
         pageNumber += 1
         nextPage = nextUrl[0] + "&pid=" + str(pageNumber * imagesPerPage)
-        yield scrapy.Request(nextPage, callback=self.parse)
+        if parsing:
+            yield scrapy.Request(nextPage, callback=self.parse)
+        else:
+            raise CloseSpider('Done looking')
         
     def parse_images(self, response):
         imageUrl = response.css("img::attr(src)").extract_first()
         realUrl = ''.join(imageUrl)
-        theFile = open('debug.txt', 'w')
-        theFile.write("%s\n" % imageUrl)
-        theFile.write("%s\n" % realUrl)
-        theFile.close()
         #Converts the URL into a string and places it in images_urls, which is used to download the image
         yield GetanimepicsItem(image_urls=[realUrl])
 
