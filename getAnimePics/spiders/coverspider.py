@@ -21,16 +21,13 @@ class CoverSpider(scrapy.Spider):
         #For every thumbnail, extract the image link from under the span a attribute
         url = response.css("span a::attr(href)").extract()
         urlList = zip(url)
-        theFile = open('debug.txt', 'w')
         #Gets every url in the list and then makes them into a string 
         for item in urlList:
             imageLink = ''.join(item)
             imageLink = "https:" + imageLink
-            theFile.write("%s\n" % item)
             #Once the link is converted into a string, it uses it as the URL and calls parse_images
             yield scrapy.Request(imageLink, callback=self.parse_images)
      
-        theFile.close()
         nextUrl = response.url.split("&pid=")
         global pageNumber
         pageNumber += 1
@@ -38,12 +35,8 @@ class CoverSpider(scrapy.Spider):
         yield scrapy.Request(nextPage, callback=self.parse)
         
     def parse_images(self, response):
-        imageUrl = response.css("img::attr(src)").extract()
+        imageUrl = response.css("img::attr(src)").extract_first()
         realUrl = ''.join(imageUrl)
-        theFile = open('debug.txt', 'w')
-        theFile.write("%s\n" % imageUrl)
-        theFile.write("%s\n" % realUrl)
-        theFile.close()
         #Converts the URL into a string and places it in images_urls, which is used to download the image
         yield GetanimepicsItem(image_urls=[realUrl])
 

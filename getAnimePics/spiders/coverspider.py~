@@ -38,8 +38,12 @@ class CoverSpider(scrapy.Spider):
         yield scrapy.Request(nextPage, callback=self.parse)
         
     def parse_images(self, response):
-        imageUrl = response.css("img::attr(src)").extract()
+        imageUrl = response.css("img::attr(src)").extract_first()
         realUrl = ''.join(imageUrl)
+        theFile = open('debug.txt', 'w')
+        theFile.write("%s\n" % imageUrl)
+        theFile.write("%s\n" % realUrl)
+        theFile.close()
         #Converts the URL into a string and places it in images_urls, which is used to download the image
         yield GetanimepicsItem(image_urls=[realUrl])
 
