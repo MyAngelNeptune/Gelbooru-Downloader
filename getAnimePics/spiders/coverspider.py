@@ -2,6 +2,7 @@
 from getAnimePics.items import GetanimepicsItem
 import datetime
 import scrapy
+scrapy.exceptions import CloseSpider
 
 pageNumber = 0
 
