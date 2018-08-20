@@ -26,14 +26,11 @@ class CoverSpider(scrapy.Spider):
             #Once the link is converted into a string, it uses it as the URL and calls parse_images
             yield scrapy.Request(imageLink, callback=self.parse_images)
         
-
         nextUrl = response.url.split("&pid=")
         nextPage = nextUrl[0] + "&pid=" + str(pageNumber * imagesPerPage)
         pageNumber += 1
         yield scrapy.Request(nextPage, callback=self.parse)
         
-
-
     def parse_images(self, response):
         imageUrl = response.css("img::attr(src)").extract()
         realUrl = ''.join(imageUrl)

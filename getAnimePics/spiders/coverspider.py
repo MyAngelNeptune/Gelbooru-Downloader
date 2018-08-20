@@ -12,9 +12,10 @@ class CoverSpider(scrapy.Spider):
         "IMAGES_STORE": 'D:\Cute anime girls\Tomoe'
     }
 
+    pageNumber = 1
+
     def parse(self, response):
         #Starts on first page and increases the page number once every image is downloaded
-        pageNumber = 1
         imagesPerPage = 42
         #For every thumbnail, extract the image link from under the span a attribute
         url = response.css("span a::attr(href)").extract()
