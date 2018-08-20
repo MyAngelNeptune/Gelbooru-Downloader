@@ -51,7 +51,7 @@ class CoverSpider(scrapy.Spider):
         imageUrl = response.css("img::attr(src)").extract_first()
         realUrl = ''.join(imageUrl)
         #if the following pic is not in original quality
-        if "samples" in tempUrl:
+        if "samples" in realUrl:
             #hard code found the xpath on gelbooru seems to be the same for every image though
             list = response.xpath("/html/body/div[4]/div[5]/script[2]/text()").extract()
             tempString = ''.join(list)
