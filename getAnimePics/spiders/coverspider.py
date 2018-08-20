@@ -49,20 +49,22 @@ class CoverSpider(scrapy.Spider):
     def parse_images(self, response):
         #this is real bad
         imageUrl = response.css("img::attr(src)").extract_first()
-        tempUrl = ''.join(imageUrl)
-        #hard code found the xpath on gelbooru seems to be the same for every image though
-        list = response.xpath("/html/body/div[4]/div[5]/script[2]/text()").extract()
-        tempString = ''.join(list)
-        #extracts part of the hd image url, not sample
-        tempString = tempString[(tempString.index('\'img\'')):(tempString.index('\', \'base_dir'))]
-        image = tempString.split('\'img\':\'')
-        image = ''.join(image[1])
-        #replaces the imageurl if it is a sample
-        realUrl = tempUrl.replace("samples", "images")
-        realUrl = realUrl.split("sample_")
-        finalUrl = realUrl[0] + image
+        realUrl = ''.join(imageUrl)
+        #if the following pic is not in original quality
+        if "samples" in realUrl:
+            #hard code found the xpath on gelbooru seems to be the same for every image though
+            list = response.xpath("/html/body/div[4]/div[5]/script[2]/text()").extract()
+            tempString = ''.join(list)
+            #extracts part of the hd image url, not sample
+            tempString = tempString[(tempString.index('\'img\'')):(tempString.index('\', \'base_dir'))]
+            image = tempString.split('\'img\':\'')
+            image = ''.join(image[1])
+            #replaces the imageurl if it is a sample
+            realUrl = realUrl.replace("samples", "images")
+            realUrl = realUrl.split("sample_")
+            realUrl = realUrl[0] + image
         #Converts the URL into a string and places it in images_urls, which is used to download the image
-        yield GetanimepicsItem(image_urls=[finalUrl])
+        yield GetanimepicsItem(image_urls=[realUrl])
 
 
             
