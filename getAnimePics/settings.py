@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'getAnimePics.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'getAnimePics (+http://www.yourdomain.com)'
+USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -34,6 +34,7 @@ DOWNLOAD_DELAY = 3
 
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED = False
+COOKIES_DEBUG = True
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
