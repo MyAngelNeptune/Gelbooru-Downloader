@@ -15,6 +15,7 @@ class CoverSpider(scrapy.Spider):
     def parse(self, response):
         #Starts on first page and increases the page number once every image is downloaded
         pageNumber = 1
+        imagesPerPage = 42
         #For every thumbnail, extract the image link from under the span a attribute
         url = response.css("span a::attr(href)").extract()
         urlList = zip(url)
@@ -24,6 +25,13 @@ class CoverSpider(scrapy.Spider):
             imageLink = "https:" + imageLink
             #Once the link is converted into a string, it uses it as the URL and calls parse_images
             yield scrapy.Request(imageLink, callback=self.parse_images)
+        
+
+        nextUrl = response.url.split("&pid=")
+        nextPage = nextUrl[0] + "&pid=" + str(pageNumber * imagesPerPage)
+        pageNumber += 1
+        yield scrapy.Request(nextPage, callback=self.parse)
+        
 
 
     def parse_images(self, response):
