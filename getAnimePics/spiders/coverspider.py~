@@ -9,10 +9,10 @@ pageNumber = 0
 class CoverSpider(scrapy.Spider):
     name = "gelbooruSearch"
     allowed_domains = ['gelbooru.com']
-    start_urls = ["https://gelbooru.com/index.php?page=post&s=list&tags=solo+tomoe_gozen_%28fate%2Fgrand_order%29+rating%3Asafe&pid=0"]
+    start_urls = ["https://gelbooru.com/index.php?page=post&s=list&tags=okita_souji_%28fate%29+solo+rating%3asafe"]
     custom_settings = {
         "ITEM_PIPELINES": {'scrapy.pipelines.images.ImagesPipeline': 1},
-        "IMAGES_STORE": 'D:\Cute anime girls\Tomoe'
+        "IMAGES_STORE": 'D:\Cute anime girls\Okita'
     }
 
     def request(self, url, callback):
@@ -24,19 +24,15 @@ class CoverSpider(scrapy.Spider):
         return request
 
     def parse(self, response):
-        parsing = False
         #Starts on first page and increases the page number once every image is downloaded
         imagesPerPage = 42
         #For every thumbnail, extract the image link from under the span a attribute
         url = response.css("span a::attr(href)").extract()
         urlList = zip(url)
-        file = open("debug.txt", "a+")
         #Gets every url in the list and then makes them into a string 
         for item in urlList:
-            parsing = True
             imageLink = ''.join(item)
             imageLink = "https:" + imageLink
-            file.write(imageLink + "\n")
             #Once the link is converted into a string, it uses it as the URL and calls parse_images
             yield self.request(imageLink, callback=self.parse_images)
      
@@ -44,9 +40,7 @@ class CoverSpider(scrapy.Spider):
         global pageNumber
         pageNumber += 1
         nextPage = nextUrl[0] + "&pid=" + str(pageNumber * imagesPerPage)
-        file.write(nextPage + "\n")
-        file.close()
-        if len(urlList) < 42:
+        if len(urlList) == 42:
             yield self.request(nextPage, callback=self.parse)
              
     def parse_images(self, response):
@@ -67,8 +61,6 @@ class CoverSpider(scrapy.Spider):
             realUrl = realUrl.split("sample_")
             realUrl = realUrl[0] + image
 
-        file = open("debug.txt", "a+")
-        file.write(realUrl + "\n")
         #Converts the URL into a string and places it in images_urls, which is used to download the image
         yield GetanimepicsItem(image_urls=[realUrl])
 
