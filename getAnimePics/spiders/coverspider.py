@@ -2,17 +2,17 @@
 from getAnimePics.items import GetanimepicsItem
 import datetime
 import scrapy
-scrapy.exceptions import CloseSpider
+from scrapy.exceptions import CloseSpider
 
 pageNumber = 0
 
 class CoverSpider(scrapy.Spider):
     name = "gelbooruSearch"
     allowed_domains = ['gelbooru.com']
-    start_urls = ["https://gelbooru.com/index.php?page=post&s=list&tags=dengeki&pid=0"]
+    start_urls = ["https://gelbooru.com/index.php?page=post&s=list&tags=solo+tomoe_gozen_%28fate%2Fgrand_order%29+rating%3Asafe&pid=0"]
     custom_settings = {
         "ITEM_PIPELINES": {'scrapy.pipelines.images.ImagesPipeline': 1},
-        "IMAGES_STORE": 'D:\Cute anime girls\Test'
+        "IMAGES_STORE": 'D:\Cute anime girls\Tomoe'
     }
 
     def request(self, url, callback):
@@ -30,11 +30,13 @@ class CoverSpider(scrapy.Spider):
         #For every thumbnail, extract the image link from under the span a attribute
         url = response.css("span a::attr(href)").extract()
         urlList = zip(url)
+        file = open("debug.txt", "a+")
         #Gets every url in the list and then makes them into a string 
         for item in urlList:
             parsing = True
             imageLink = ''.join(item)
             imageLink = "https:" + imageLink
+            file.write(imageLink + "\n")
             #Once the link is converted into a string, it uses it as the URL and calls parse_images
             yield self.request(imageLink, callback=self.parse_images)
      
@@ -42,11 +44,11 @@ class CoverSpider(scrapy.Spider):
         global pageNumber
         pageNumber += 1
         nextPage = nextUrl[0] + "&pid=" + str(pageNumber * imagesPerPage)
-        if parsing:
+        file.write(nextPage + "\n")
+        file.close()
+        if len(urlList) == 42:
             yield self.request(nextPage, callback=self.parse)
-        else:
-            raise CloseSpider('Done looking')
-        
+             
     def parse_images(self, response):
         #this is real bad
         imageUrl = response.css("img::attr(src)").extract_first()
@@ -64,6 +66,9 @@ class CoverSpider(scrapy.Spider):
             realUrl = realUrl.replace("samples", "images")
             realUrl = realUrl.split("sample_")
             realUrl = realUrl[0] + image
+
+        file = open("debug.txt", "a+")
+        file.write(realUrl + "\n")
         #Converts the URL into a string and places it in images_urls, which is used to download the image
         yield GetanimepicsItem(image_urls=[realUrl])
 
